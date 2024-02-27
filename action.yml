@@ -3,14 +3,10 @@ description: 'Report CI metrics to skillz-bot'
 author: 'Your name or organization here'
 
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-  milliseconds:
-    description: 'Your input description here'
-    required: true
-    default: '1000'
+  example:  # id of input
+    description: 'An example for later to remember'
+    required: false
+    default: '<Put your value here>'
 
 outputs:
   time: # id of output
