@@ -19,7 +19,6 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}/
 let debugMock: jest.SpiedFunction<typeof core.debug>
 let errorMock: jest.SpiedFunction<typeof core.error>
 let getInputMock: jest.SpiedFunction<typeof core.getInput>
-let setFailedMock: jest.SpiedFunction<typeof core.setFailed>
 let setOutputMock: jest.SpiedFunction<typeof core.setOutput>
 
 describe('action', () => {
@@ -29,7 +28,6 @@ describe('action', () => {
     debugMock = jest.spyOn(core, 'debug').mockImplementation()
     errorMock = jest.spyOn(core, 'error').mockImplementation()
     getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-    setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
     setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
   })
 
@@ -55,7 +53,7 @@ describe('action', () => {
     )
     expect(debugMock).toHaveBeenNthCalledWith(
       3,
-      expect.stringMatching(timeRegex)
+      "The event payload: {}"
     )
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
