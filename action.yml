@@ -7,11 +7,15 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
+  milliseconds:
+    description: 'Your input description here'
+    required: true
+    default: '1000'
 
 outputs:
   time: # id of output
     description: 'The time we greeted you'
-    
+
 runs:
   using: 'node20'
   main: 'dist/index.js'
