@@ -19,7 +19,7 @@ export async function run(): Promise<void> {
     core.debug(new Date().toTimeString())
 
     const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
+    console.log(`The event payload: ${payload}`)
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())
