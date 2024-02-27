@@ -1,13 +1,17 @@
 name: 'SkillArc CI Integration'
 description: 'Report CI metrics to skillz-bot'
+author: 'Your name or organization here'
+
 inputs:
   who-to-greet:  # id of input
     description: 'Who to greet'
     required: true
     default: 'World'
+
 outputs:
   time: # id of output
     description: 'The time we greeted you'
+    
 runs:
   using: 'node20'
   main: 'dist/index.js'
