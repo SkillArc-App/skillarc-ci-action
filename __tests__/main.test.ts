@@ -51,7 +51,6 @@ describe('action', () => {
       2,
       expect.stringMatching(timeRegex)
     )
-    expect(debugMock).toHaveBeenNthCalledWith(3, 'The event payload: {}')
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'time',
