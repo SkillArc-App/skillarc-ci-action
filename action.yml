@@ -2,16 +2,12 @@ name: 'SkillArc CI Integration'
 description: 'Report CI metrics to skillz-bot'
 author: 'Your name or organization here'
 
-inputs:
-  example:  # id of input
-    description: 'An example for later to remember'
-    required: false
-    default: '<Put your value here>'
-
 outputs:
   time: # id of output
     description: 'The time we greeted you'
 
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  main: 'dist/main/index.js'
+  post: dist/post/index.js
+
