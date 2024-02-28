@@ -53237,10 +53237,7 @@ async function run() {
             core.error(`Couldn't find current job. So action will not report any data.`);
             return;
         }
-        const steps = currentJob.steps ?? [];
-        // .filter(({ status }) => {
-        //   status === 'completed'
-        // })
+        const steps = (currentJob.steps ?? []).filter(({ status }) => status === 'completed');
         if (steps.length > 0 &&
             steps.every(({ conclusion }) => conclusion === 'success')) {
             const startTime = steps[0].started_at;

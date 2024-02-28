@@ -24,11 +24,9 @@ export async function run(): Promise<void> {
       return
     }
 
-    const steps = currentJob.steps ?? []
-
-    // .filter(({ status }) => {
-    //   status === 'completed'
-    // })
+    const steps = (currentJob.steps ?? []).filter(
+      ({ status }) => status === 'completed'
+    )
 
     if (
       steps.length > 0 &&
