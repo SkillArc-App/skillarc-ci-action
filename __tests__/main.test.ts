@@ -16,46 +16,23 @@ const runMock = jest.spyOn(main, 'run')
 const timeRegex = /^\d{2}:\d{2}:\d{2}/
 
 // Mock the GitHub Actions core library
-let debugMock: jest.SpiedFunction<typeof core.debug>
+let infoMock: jest.SpiedFunction<typeof core.info>
 let errorMock: jest.SpiedFunction<typeof core.error>
-let getInputMock: jest.SpiedFunction<typeof core.getInput>
-let setOutputMock: jest.SpiedFunction<typeof core.setOutput>
 
 describe('action', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    debugMock = jest.spyOn(core, 'debug').mockImplementation()
+    infoMock = jest.spyOn(core, 'info').mockImplementation()
     errorMock = jest.spyOn(core, 'error').mockImplementation()
-    getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
   })
 
   it('sets the time output', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'example':
-          return 'Example'
-        default:
-          return ''
-      }
-    })
-
     await main.run()
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'The example input Example')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    expect(infoMock).toHaveBeenCalledWith('Setup to capture run information.')
     expect(errorMock).not.toHaveBeenCalled()
   })
 })
