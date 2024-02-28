@@ -47,7 +47,7 @@ export async function getCurrentJob(): Promise<WorkflowJobType | null> {
       }
       await new Promise(r => setTimeout(r, 1000))
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     core.error(
       `Unable to get current workflow job info. ` +
         `Please sure that your workflow have "actions:read" permission!`

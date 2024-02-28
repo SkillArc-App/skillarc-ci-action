@@ -13,7 +13,11 @@ export async function run(): Promise<void> {
     }
 
     core.info(`Current job: ${JSON.stringify(currentJob)}`)
-  } catch (error: any) {
-    core.error(error.message)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('Unknown error')
+    }
   }
 }
