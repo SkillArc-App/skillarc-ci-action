@@ -53220,8 +53220,14 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const jobs_1 = __nccwpck_require__(6647);
+async function wait(time) {
+    return new Promise(resolve => {
+        setTimeout(resolve, time);
+    });
+}
 async function run() {
     try {
+        await wait(1000);
         const currentJob = await (0, jobs_1.getCurrentJob)();
         if (!currentJob) {
             core.error(`Couldn't find current job. So action will not report any data.`);

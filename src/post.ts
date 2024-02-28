@@ -1,8 +1,15 @@
 import * as core from '@actions/core'
 import { getCurrentJob } from './jobs'
 
+async function wait(time: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}
+
 export async function run(): Promise<void> {
   try {
+    await wait(1000)
     const currentJob = await getCurrentJob()
 
     if (!currentJob) {
