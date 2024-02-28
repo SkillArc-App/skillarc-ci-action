@@ -12,6 +12,7 @@ export async function run(): Promise<void> {
       return
     }
 
+    console.log(`Current job: ${JSON.stringify(currentJob)}`)
     core.info(`Current job: ${JSON.stringify(currentJob)}`)
   } catch (error: unknown) {
     if (error instanceof Error) {
