@@ -1104,7 +1104,7 @@ exports.getOctokit = getOctokit;
 
 /***/ }),
 
-/***/ 1547:
+/***/ 7914:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -1212,7 +1212,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
 const Context = __importStar(__nccwpck_require__(4087));
-const Utils = __importStar(__nccwpck_require__(1547));
+const Utils = __importStar(__nccwpck_require__(7914));
 // octokit + plugins
 const core_1 = __nccwpck_require__(6762);
 const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
@@ -20202,7 +20202,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 7914:
+/***/ 9178:
 /***/ ((module) => {
 
 "use strict";
@@ -20970,7 +20970,7 @@ const {
   kLastProgressEventFired
 } = __nccwpck_require__(6330)
 const { ProgressEvent } = __nccwpck_require__(8708)
-const { getEncoding } = __nccwpck_require__(7914)
+const { getEncoding } = __nccwpck_require__(9178)
 const { serializeAMimeType, parseMIMEType } = __nccwpck_require__(3633)
 const { types } = __nccwpck_require__(7261)
 const { StringDecoder } = __nccwpck_require__(1576)
@@ -53219,8 +53219,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const action_1 = __nccwpck_require__(1231);
 const github = __importStar(__nccwpck_require__(5438));
+const action_1 = __nccwpck_require__(1231);
 const jobs_1 = __nccwpck_require__(6647);
 const octokit = new action_1.Octokit();
 async function wait(time) {
@@ -53237,12 +53237,15 @@ async function run() {
             core.error(`Couldn't find current job. So action will not report any data.`);
             return;
         }
-        const steps = currentJob.steps?.filter(step => {
-            step.status === 'completed';
-        }) ?? [];
-        if (steps.length) {
+        const steps = (currentJob.steps ?? []).filter(({ status }) => {
+            status === 'completed';
+        });
+        if (steps.length > 0 &&
+            steps.every(({ conclusion }) => conclusion === 'success')) {
             const startTime = steps[0].started_at;
             const endTime = steps[steps.length - 1].completed_at;
+            core.info(`start time: ${startTime}`);
+            core.info(`end time: ${endTime}`);
             if (startTime && endTime) {
                 const totalTime = Date.parse(endTime) - Date.parse(startTime);
                 if (totalTime / 1000 > seconds) {

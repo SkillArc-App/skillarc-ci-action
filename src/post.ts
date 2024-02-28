@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import { Octokit } from '@octokit/action'
 import * as github from '@actions/github'
+import { Octokit } from '@octokit/action'
 import { getCurrentJob } from './jobs'
 const octokit: Octokit = new Octokit()
 
@@ -24,14 +24,19 @@ export async function run(): Promise<void> {
       return
     }
 
-    const steps =
-      currentJob.steps?.filter(step => {
-        step.status === 'completed'
-      }) ?? []
+    const steps = (currentJob.steps ?? []).filter(({ status }) => {
+      status === 'completed'
+    })
 
-    if (steps.length) {
+    if (
+      steps.length > 0 &&
+      steps.every(({ conclusion }) => conclusion === 'success')
+    ) {
       const startTime = steps[0].started_at
       const endTime = steps[steps.length - 1].completed_at
+
+      core.info(`start time: ${startTime}`)
+      core.info(`end time: ${endTime}`)
 
       if (startTime && endTime) {
         const totalTime = Date.parse(endTime) - Date.parse(startTime)
