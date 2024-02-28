@@ -53219,15 +53219,62 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const action_1 = __nccwpck_require__(1231);
 const jobs_1 = __nccwpck_require__(6647);
+const octokit = new action_1.Octokit();
+async function wait(time) {
+    return new Promise(resolve => {
+        setTimeout(resolve, time);
+    });
+}
 async function run() {
     try {
+        const seconds = Number.parseInt(core.getInput('alert_threshold'));
+        await wait(1000);
         const currentJob = await (0, jobs_1.getCurrentJob)();
         if (!currentJob) {
             core.error(`Couldn't find current job. So action will not report any data.`);
             return;
         }
+        const steps = (currentJob.steps ?? []).filter(({ status }) => status === 'completed');
+        if (steps.length > 0 &&
+            steps.every(({ conclusion }) => conclusion === 'success')) {
+            const startTime = steps[0].started_at;
+            const endTime = steps[steps.length - 1].completed_at;
+            core.info(`start time: ${startTime}`);
+            core.info(`end time: ${endTime}`);
+            if (startTime && endTime) {
+                const totalTime = Date.parse(endTime) - Date.parse(startTime);
+                if (totalTime / 1000 > seconds) {
+                    const { repo, issue } = github.context;
+                    const longestSteps = steps
+                        .map(({ name, completed_at, started_at }) => ({
+                        name,
+                        duration: Date.parse(completed_at) -
+                            Date.parse(started_at)
+                    }))
+                        .sort((a, b) => b.duration - a.duration);
+                    const lines = [
+                        `Job runtime ${currentJob.name} for has exceeded maximum runtime set of ${seconds.toString()} seconds.`,
+                        `Review the run [here](${currentJob.html_url})`,
+                        '',
+                        'Here are the longest steps',
+                        '|step|run time|',
+                        '|--|--|',
+                        ...longestSteps.map(({ name, duration }) => `|${name}|${duration / 1000} seconds|`)
+                    ];
+                    octokit.rest.issues.createComment({
+                        issue_number: issue.number,
+                        owner: repo.owner,
+                        repo: repo.repo,
+                        body: lines.join('\n')
+                    });
+                }
+            }
+        }
         core.info(`Current job: ${JSON.stringify(currentJob)}`);
+        core.info(`steps: ${JSON.stringify(steps)}`);
     }
     catch (error) {
         if (error instanceof Error) {
@@ -53239,6 +53286,7 @@ async function run() {
     }
 }
 exports.run = run;
+run();
 
 
 /***/ }),
