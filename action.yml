@@ -2,6 +2,12 @@ name: 'SkillArc CI Integration'
 description: 'Report CI metrics to skillz-bot'
 author: 'Your name or organization here'
 
+inputs:
+  alert_threshold:
+    description: 'The threshold before we report an error in second'
+    required: false
+    default: 300
+
 runs:
   using: 'node20'
   main: 'dist/main/index.js'

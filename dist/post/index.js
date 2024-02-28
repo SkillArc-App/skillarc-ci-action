@@ -53233,8 +53233,18 @@ async function run() {
             core.error(`Couldn't find current job. So action will not report any data.`);
             return;
         }
-        console.log(`Current job: ${JSON.stringify(currentJob)}`);
-        core.info(`Current job: ${JSON.stringify(currentJob)}`);
+        const steps = currentJob.steps?.filter(step => {
+            step.status === 'completed';
+        }) ?? [];
+        if (steps.length) {
+            const startTime = steps[0].started_at;
+            const endTime = steps[steps.length - 1].completed_at;
+            if (startTime && endTime) {
+                const totalTime = Date.parse(endTime) - Date.parse(startTime);
+                core.info(`Total runtime ${totalTime}`);
+                core.info(`Current job: ${JSON.stringify(currentJob)}`);
+            }
+        }
     }
     catch (error) {
         if (error instanceof Error) {
