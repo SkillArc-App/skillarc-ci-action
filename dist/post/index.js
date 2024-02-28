@@ -53227,6 +53227,7 @@ async function run() {
             core.error(`Couldn't find current job. So action will not report any data.`);
             return;
         }
+        console.log(`Current job: ${JSON.stringify(currentJob)}`);
         core.info(`Current job: ${JSON.stringify(currentJob)}`);
     }
     catch (error) {
