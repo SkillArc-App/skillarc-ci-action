@@ -44,11 +44,32 @@ export async function run(): Promise<void> {
         if (totalTime / 1000 > seconds) {
           const { repo, issue } = github.context
 
+          const longestSteps = steps
+            .map(({ name, completed_at, started_at }) => ({
+              name,
+              duration:
+                Date.parse(completed_at as string) -
+                Date.parse(started_at as string)
+            }))
+            .sort((a, b) => b.duration - a.duration)
+
+          const lines: string[] = [
+            `Job runtime ${currentJob.name} for has exceeded maximum runtime set of ${seconds.toString()} seconds.`,
+            `Review the run [here](${currentJob.html_url})`,
+            '',
+            'Here are the longest steps',
+            '|step|run time|',
+            '|--|--|',
+            ...longestSteps.map(
+              ({ name, duration }) => `|${name}|${duration / 1000} seconds|`
+            )
+          ]
+
           octokit.rest.issues.createComment({
             issue_number: issue.number,
             owner: repo.owner,
             repo: repo.repo,
-            body: `Job runtime ${currentJob.name} for has exceeded maximum runtime of ${seconds} seconds. \nReview the run [here](${currentJob.run_url})`
+            body: lines.join('\n')
           })
         }
       }
