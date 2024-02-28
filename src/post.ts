@@ -46,10 +46,11 @@ export async function run(): Promise<void> {
             body: `Job runtime ${currentJob.name} for has exceeded maximum runtime of ${seconds} seconds. \nReview the run [here](${currentJob.run_url})`
           })
         }
-
-        core.info(`Current job: ${JSON.stringify(currentJob)}`)
       }
     }
+
+    core.info(`Current job: ${JSON.stringify(currentJob)}`)
+    core.info(`steps: ${JSON.stringify(steps)}`)
   } catch (error: unknown) {
     if (error instanceof Error) {
       core.error(error.message)

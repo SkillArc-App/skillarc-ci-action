@@ -1104,7 +1104,7 @@ exports.getOctokit = getOctokit;
 
 /***/ }),
 
-/***/ 7914:
+/***/ 1547:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -1212,7 +1212,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
 const Context = __importStar(__nccwpck_require__(4087));
-const Utils = __importStar(__nccwpck_require__(7914));
+const Utils = __importStar(__nccwpck_require__(1547));
 // octokit + plugins
 const core_1 = __nccwpck_require__(6762);
 const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
@@ -20202,7 +20202,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9178:
+/***/ 7914:
 /***/ ((module) => {
 
 "use strict";
@@ -20970,7 +20970,7 @@ const {
   kLastProgressEventFired
 } = __nccwpck_require__(6330)
 const { ProgressEvent } = __nccwpck_require__(8708)
-const { getEncoding } = __nccwpck_require__(9178)
+const { getEncoding } = __nccwpck_require__(7914)
 const { serializeAMimeType, parseMIMEType } = __nccwpck_require__(3633)
 const { types } = __nccwpck_require__(7261)
 const { StringDecoder } = __nccwpck_require__(1576)
@@ -53219,7 +53219,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const action_1 = __nccwpck_require__(1231);
+const github = __importStar(__nccwpck_require__(5438));
 const jobs_1 = __nccwpck_require__(6647);
+const octokit = new action_1.Octokit();
 async function wait(time) {
     return new Promise(resolve => {
         setTimeout(resolve, time);
@@ -53227,6 +53230,7 @@ async function wait(time) {
 }
 async function run() {
     try {
+        const seconds = Number.parseInt(core.getInput('alert_threshold'));
         await wait(1000);
         const currentJob = await (0, jobs_1.getCurrentJob)();
         if (!currentJob) {
@@ -53241,10 +53245,19 @@ async function run() {
             const endTime = steps[steps.length - 1].completed_at;
             if (startTime && endTime) {
                 const totalTime = Date.parse(endTime) - Date.parse(startTime);
-                core.info(`Total runtime ${totalTime}`);
-                core.info(`Current job: ${JSON.stringify(currentJob)}`);
+                if (totalTime / 1000 > seconds) {
+                    const { repo, issue } = github.context;
+                    octokit.rest.issues.createComment({
+                        issue_number: issue.number,
+                        owner: repo.owner,
+                        repo: repo.repo,
+                        body: `Job runtime ${currentJob.name} for has exceeded maximum runtime of ${seconds} seconds. \nReview the run [here](${currentJob.run_url})`
+                    });
+                }
             }
         }
+        core.info(`Current job: ${JSON.stringify(currentJob)}`);
+        core.info(`steps: ${JSON.stringify(steps)}`);
     }
     catch (error) {
         if (error instanceof Error) {
